@@ -13,6 +13,7 @@
 
 #ifdef _MSC_VER
 
+#include <limits.h>
 /*******************************************************
  * Windows specific macros
  *******************************************************/
@@ -59,7 +60,17 @@ inline int __builtin_ctz(unsigned long x) {
 
 #ifndef __clang__
 inline int __builtin_clzll(uint64_t x) {
+    #if defined(_MSC_VER) && defined(_M_ARM64)
+    unsigned long index;
+    int d;
+    d = sizeof(uint64_t) * CHAR_BIT;
+    if (_BitScanReverse64(&index,x)) {
+        d = d - 1 - index;
+    }
+    return d;
+    #else
     return (int)__lzcnt64(x);
+    #endif
 }
 #endif
 
