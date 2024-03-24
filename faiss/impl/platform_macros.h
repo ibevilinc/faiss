@@ -75,7 +75,15 @@ inline int __builtin_clzll(uint64_t x) {
 #endif
 
 #define __builtin_popcount __popcnt
+#if defined(_MSC_VER) && defined(_M_ARM64)
+inline int __builtin_popcountl(uint64_t x) {
+    int c = 0;
+    for(;x;c++)x &= x - 1;
+    return c;
+}
+#else
 #define __builtin_popcountl __popcnt64
+#endif
 
 #ifndef __clang__
 #define __m128i_u __m128i
